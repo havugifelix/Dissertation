@@ -58,7 +58,7 @@ NB_CLASSES = 4
 
 
 # You may want to reduce this considerably if you don't have a killer GPU:
-epochs=300
+epochs= 50
 STARTING_L2_REG = 0.0007
 
 OPTIMIZER_STR_TO_CLASS = {
@@ -78,22 +78,22 @@ OPTIMIZER_STR_TO_CLASS = {
 # # Let's use some data augmentaiton 
 # datagen = ImageDataGenerator()
 
+
 ####---------------------------------Data Generator----------
 num_classes = 4
 img_rows, img_cols = 224,224
 batch_size =16
-train_data_dir = "/media/kashraf/Elements/Dissertation/data/preprocessed/visual/interval_topos/beta/sepate_intervals/interv1"
-validation_data_dir ="/media/kashraf/Elements/Dissertation/data/pouya_topomaps/beta/interv_1/test"
+train_data_dir ="/media/kashraf/Elements/Dissertation/data/preprocessed/visual/topomaps/stacked/train/"
+validation_data_dir = "/media/kashraf/Elements/Dissertation/data/preprocessed/visual/topomaps/stacked/test/"
+scale=1./255
+# Let's use some data augmentaiton
+#rescale=1./255 
+train_datagen = ImageDataGenerator(rescale=scale)
 
-# Let's use some data augmentaiton 
-rescale=1./255
-train_datagen = ImageDataGenerator(rescale=rescale)
+validation_datagen = ImageDataGenerator(rescale=scale)
 
-validation_datagen = ImageDataGenerator(rescale=rescale)
- 
-train_generator = train_datagen.flow_from_directory(
+train_generator = train_datagen.flow_from_directory(  
     train_data_dir,
-    
     target_size=(img_rows, img_cols),
     color_mode="rgb",
     batch_size=batch_size,
@@ -102,15 +102,14 @@ train_generator = train_datagen.flow_from_directory(
 
 validation_generator = validation_datagen.flow_from_directory(
     validation_data_dir,
-
     target_size=(img_rows, img_cols),
     color_mode="rgb",
     batch_size=batch_size,
     class_mode='categorical',
-    shuffle=True)
+    shuffle=False)
 
 
-
+WEIGHTS_DIR="/media/kashraf/Elements/Dissertation/modelling/hyperopt/stacked/weights/"
 def build_and_train(hype_space, save_best_weights=True, log_for_tensorboard=False):
     """Build the deep CNN model and train it."""
     K.set_learning_phase(1)
@@ -135,11 +134,11 @@ def build_and_train(hype_space, save_best_weights=True, log_for_tensorboard=Fals
 
     callbacks = []
 
+ 
     # Weight saving callback:
-    WEIGHTS_DIR="/media/kashraf/Elements/Dissertation/modelling/General/weights"
     if save_best_weights:
         weights_save_path = os.path.join(
-            WEIGHTS_DIR, 'Beta_interval1.h5'.format(model_uuid))
+            WEIGHTS_DIR, '{}_Visusal_stack_V2_space.h5'.format(model_uuid))
         print("Model's weights will be saved to: {}".format(weights_save_path))
         if not os.path.exists(WEIGHTS_DIR):
             os.makedirs(WEIGHTS_DIR)

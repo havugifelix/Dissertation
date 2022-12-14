@@ -5,11 +5,12 @@
 
 
 """Json utils to print, save and load training results."""
-# from bson import json_util
-import json_util
+
+
+from bson import json_util
 import json
 import os
-
+#import json_util
 
 __author__ = "Vooban Inc."
 __copyright__ = "Copyright 2017, Vooban Inc."

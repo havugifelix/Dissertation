@@ -27,14 +27,14 @@ space = {
     # L2 weight decay:
     'l2_weight_reg_mult': hp.loguniform('l2_weight_reg_mult', -1.3, 1.3),
     # Batch size fed for each gradient update
-    'batch_size': hp.quniform('batch_size', 16, 500, 8),
+    'batch_size': hp.quniform('batch_size', 8, 32, 8),
     # Choice of optimizer:
     'optimizer': hp.choice('optimizer', ['Adam', 'Nadam', 'RMSprop','SGD','Adadelta',"Adagrad"]),
     # Coarse labels importance for weights updates:
     
     
     
-    'conv_dropout_drop_proba': hp.uniform('conv_dropout_proba', 0.0, 0.35),
+    'conv_dropout_drop_proba': hp.uniform('conv_dropout_proba', 0.0, 0.5),
     # Uniform distribution in finding appropriate dropout values, FC layers
     'fc_dropout_drop_proba': hp.uniform('fc_dropout_proba', 0.0, 0.6),
     # Use batch normalisation at more places?
@@ -59,11 +59,12 @@ space = {
     'pooling_type': hp.choice('pooling_type', [
         'max',  # Max pooling
         'avg',  # Average pooling
-        'all_conv',  # All-convolutionnal: https://arxiv.org/pdf/1412.6806.pdf
-        'inception'  # Inspired from: https://arxiv.org/pdf/1602.07261.pdf
+       # 'all_conv',  # All-convolutionnal: https://arxiv.org/pdf/1412.6806.pdf
+        #'inception'  # Inspired from: https://arxiv.org/pdf/1602.07261.pdf
     ]),
     # The kernel_size for convolutions:
-    'conv_kernel_size': hp.quniform('conv_kernel_size', 2, 4, 1),
+   # 'conv_kernel_size': hp.quniform('conv_kernel_size', 3, 11, 2),
+    'conv_kernel_size': hp.choice('conv_kernel_size', [3,5,7,11]),
     # The kernel_size for residual convolutions:
     'res_conv_kernel_size': hp.quniform('res_conv_kernel_size', 2, 4, 1),
 
@@ -185,7 +186,7 @@ def run_a_trial():
         trials=trials,
         max_evals=max_evals
     )
-    pickle.dump(trials, open("results_real_gan_v1.pkl", "wb"))
+    pickle.dump(trials, open("results.pkl", "wb"))
 
     print("\nOPTIMIZATION STEP COMPLETE.\n")
 
