@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+
+class CustomDataGen(tf.keras.utils.Sequence):
+    
+    def __init__(self, x_fnames,y_fnames,batch_size,target_size=(224, 224, 3),shuffle=True):
+        
+        self.x_fnames = x_fnames
+        self.y_fnames = y_fnames
+        self.batch_size = batch_size
+        self.target_size = target_size
+        self.shuffle = shuffle
+        self.on_epoch_end()
+        
+    
+    def on_epoch_end(self):
+        'Updates indexes after each epoch'
+        self.indexes = np.arange(self.x_fnames[0].shape[0])
+        if self.shuffle == True:
+            np.random.shuffle(self.indexes)
+            
+    def __process_batch(batch_files):
+        interval_images = []
+        for file in batch_files:
+            image = tf.keras.preprocessing.image.load_img(file)
+            image_arr = tf.keras.preprocessing.image.img_to_array(image)
+            image_arr = tf.image.resize(image_arr,(target_size[0], target_size[1])).numpy()
+            interval_images.append(image_arr/255)
+        return interval_images
+  
+    
+    def __get_data(self,batch_indexes):
+        
+        files = self.x_fnames
+        
+        # Select batch files and labels from all files 
+        batch_files = [file[batch_indexes] for file in files] 
+        
+        batch_images = [np.array(self.__process_batch (batch)) 
+                        for batch in batch_files]
+        
+        batch_labels = self.y_fnames[batch_ids]
+        batch_labels = to_categorical(batch_labels,num_classes=4)
+        
+        return batch_images,batch_labels
+
+    
+    def __getitem__(self, index):
+        
+        # Generate indexes of the batch
+        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
+        
+        x, y = self.__get_data(indexes)        
+        return X, y
+    
+    def __len__(self):
+        return int(np.floor(len(self.x_fnames[0].shape[0]) / self.batch_size))
+
